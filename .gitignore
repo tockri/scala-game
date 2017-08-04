@@ -1,0 +1,7 @@
+.idea
+core/build
+core/out
+android
+desktop/build
+desktop/out
+ios
