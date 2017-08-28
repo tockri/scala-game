@@ -2,7 +2,6 @@ package gdx.scala.demo.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import gdx.scala.demo.GdxScalaDemoGame;
 import gdx.scala.demo.GdxScalaFpGame;
 
 public class DesktopLauncher {
