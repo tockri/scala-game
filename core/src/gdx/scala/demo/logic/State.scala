@@ -12,9 +12,11 @@ case class SnakeState(direction:Direction,
                       path:List[Point],
                       speed:Float,
                       size:Int) extends State {
-  val pathStep:Int = if (speed == 0) 1 else GRID_WIDTH / speed.toInt
+  require(GRID_WIDTH % speed.toInt == 0)
+  val pathStep:Int = GRID_WIDTH / speed.toInt
   val top:Point = path.head
 }
+
 object SnakeState {
   def apply(direction: Direction = Stop,
             nextDirection: Direction = Stop,

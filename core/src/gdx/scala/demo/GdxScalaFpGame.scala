@@ -15,7 +15,7 @@ class GdxScalaFpGame extends ApplicationAdapter {
   private var snake: SnakeState = SnakeState(direction = Stop,
     nextDirection = Stop,
     path = List(Point(0, 0)),
-    speed = 0,
+    speed = 3,
     size = 1)
   private var fruit: FruitState = FruitState(Point(0, 0))
   private val events:ListBuffer[Event] = ListBuffer()
