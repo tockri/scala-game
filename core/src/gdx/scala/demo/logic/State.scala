@@ -1,29 +1,22 @@
 package gdx.scala.demo.logic
 
-import GameConstants._
+import GameSystem._
+
+import scala.collection.immutable.Queue
 
 trait State
 
-case class WorldState(width:Float,
-                      height:Float) extends State
-
-case class SnakeState(direction:Direction,
-                      nextDirection:Direction,
-                      path:List[Point],
-                      speed:Float,
-                      size:Int) extends State {
-  require(GRID_WIDTH % speed.toInt == 0)
-  val pathStep:Int = GRID_WIDTH / speed.toInt
-  val top:Point = path.head
+case class WorldState(size: Size = Size(0, 0)) extends State {
+  def randomPoint():Point =
+    Point(
+      GRID_WIDTH * Math.floor(Math.random() * size.width / GRID_WIDTH).toFloat,
+      GRID_WIDTH * Math.floor(Math.random() * size.height / GRID_WIDTH).toFloat)
 }
 
-object SnakeState {
-  def apply(direction: Direction = Stop,
-            nextDirection: Direction = Stop,
-            path: List[Point] = List(Point(0, 0)),
-            speed: Float = 0,
-            size: Int = 1): SnakeState =
-    new SnakeState(direction, nextDirection, path, speed, size)
-}
+case class SnakeState(direction:Direction = Stop,
+                      nextDirection:Direction = Stop,
+                      path:Queue[Point] = Queue(Point(0, 0)),
+                      speed:Float = 1.5F,
+                      size:Int = 1) extends State
 
-case class FruitState(position:Point) extends State
+case class FruitState(position:Point = Point(0, 0)) extends State

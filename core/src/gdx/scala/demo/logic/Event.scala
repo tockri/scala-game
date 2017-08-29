@@ -1,48 +1,36 @@
 package gdx.scala.demo.logic
 
-import GameConstants._
+import GameSystem._
 
-trait Event
-
-trait SnakeEvent extends Event {
-  def applyTo(snake:SnakeState)(implicit world:WorldState):SnakeState
+trait Event {
+  def applyToSnake(snake:SnakeState)(implicit world:WorldState):SnakeState = snake
+  def applyToFruit(fruit:FruitState)(implicit world:WorldState):FruitState = fruit
+  def applyToWorld(world:WorldState):WorldState = world
 }
 
-trait FruitEvent extends Event {
-  def applyTo(fruit:FruitState)(implicit world:WorldState):FruitState
-}
-
-trait CombinedEvent extends SnakeEvent with FruitEvent
-
-case class ChangeDirection(dir:Direction) extends SnakeEvent {
-  def applyTo(snake:SnakeState)(implicit world:WorldState):SnakeState = {
+case class SnakeChangesDirection(dir:Direction) extends Event {
+  override def applyToSnake(snake:SnakeState)(implicit world:WorldState):SnakeState = {
     snake.copy(nextDirection = dir)
   }
 }
 
-case class BiteFruit() extends CombinedEvent {
-  override def applyTo(snake:SnakeState)(implicit world:WorldState):SnakeState = {
-    snake.copy(size = snake.size + GameConstants.GROWTH_SIZE)
+case class SnakeBitesFruit() extends Event {
+  override def applyToSnake(snake:SnakeState)(implicit world:WorldState):SnakeState = {
+    val ap = snake.path.head
+    snake.copy(size = snake.size + GameSystem.GROWTH_SIZE,
+      path = snake.path.enqueue(List(ap, ap, ap)))
   }
 
-  override def applyTo(fruit: FruitState)(implicit world:WorldState): FruitState = {
-    fruit.copy(position = Point(
-      GRID_WIDTH * Math.floor(Math.random() * world.width / GRID_WIDTH).toFloat,
-      GRID_WIDTH * Math.floor(Math.random() * world.height / GRID_WIDTH).toFloat))
+  override def applyToFruit(fruit: FruitState)(implicit world:WorldState): FruitState = {
+    fruit.copy(position = world.randomPoint())
   }
 }
 
-case class EveryFrame() extends SnakeEvent {
-  override def applyTo(snake:SnakeState)(implicit world:WorldState):SnakeState = {
-    val top = snake.path.head
-    val nextTop = Point(top.x + snake.direction.x * snake.speed,
-      top.y + snake.direction.y * snake.speed)
-    var nextPath = nextTop :: snake.path
-    val toRemove = snake.path.length - snake.size * snake.pathStep
-    if (toRemove > 0) {
-      nextPath = nextPath.slice(0, nextPath.length - toRemove)
-    }
-    val direction = if (nextTop.x.toInt % GRID_WIDTH == 0 && nextTop.y.toInt % GRID_WIDTH == 0) {
+case class SnakeMoves() extends Event {
+  override def applyToSnake(snake:SnakeState)(implicit world:WorldState):SnakeState = {
+    val nextTop = snake.path.head.move(snake.direction, snake.speed)
+    val nextPath = snake.path.enqueue(nextTop).dequeue._2
+    val direction = if (isOnGrid(nextTop)) {
       snake.nextDirection
     } else {
       snake.direction

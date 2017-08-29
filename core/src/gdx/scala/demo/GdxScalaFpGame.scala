@@ -11,49 +11,41 @@ import scala.collection.mutable.ListBuffer
 class GdxScalaFpGame extends ApplicationAdapter {
   private lazy val renderer:Renderer = new Renderer(new SpriteBatch)
 
-  private var world: WorldState = WorldState(0, 0)
-  private var snake: SnakeState = SnakeState(direction = Stop,
-    nextDirection = Stop,
-    path = List(Point(0, 0)),
-    speed = 3,
-    size = 1)
-  private var fruit: FruitState = FruitState(Point(0, 0))
+  private var world: WorldState = WorldState()
+  private var snake: SnakeState = SnakeState()
+  private var fruit: FruitState = FruitState()
   private val events:ListBuffer[Event] = ListBuffer()
 
   private def acceptKeys():Unit = {
     val ipt = Gdx.input
     if (ipt.isKeyPressed(Keys.LEFT)) {
-      events += ChangeDirection(Left)
+      events += SnakeChangesDirection(Left)
     } else if (ipt.isKeyPressed(Keys.RIGHT)) {
-      events += ChangeDirection(Right)
+      events += SnakeChangesDirection(Right)
     } else if (ipt.isKeyPressed(Keys.UP)) {
-      events += ChangeDirection(Up)
+      events += SnakeChangesDirection(Up)
     } else if (ipt.isKeyPressed(Keys.DOWN)) {
-      events += ChangeDirection(Down)
+      events += SnakeChangesDirection(Down)
     }
   }
 
   private def judge() = {
-    if (snake.top.equals(fruit.position)) {
-      events += BiteFruit()
+    if (snake.path.head.equals(fruit.position)) {
+      events += SnakeBitesFruit()
     }
   }
 
   private def consumeEvents() = {
     implicit val worldState = world
     while (events.nonEmpty) {
-      events.remove(0) match {
-        case ev:CombinedEvent =>
-          snake = ev.applyTo(snake)
-          fruit = ev.applyTo(fruit)
-        case ev:SnakeEvent => snake = ev.applyTo(snake)
-        case ev:FruitEvent => fruit = ev.applyTo(fruit)
-      }
+      val ev = events.remove(0)
+      snake = ev.applyToSnake(snake)
+      fruit = ev.applyToFruit(fruit)
     }
   }
 
   override def render(): Unit = {
-    events += EveryFrame()
+    events += SnakeMoves()
     acceptKeys()
     judge()
     consumeEvents()
@@ -66,7 +58,8 @@ class GdxScalaFpGame extends ApplicationAdapter {
     */
   override def resize(width: Int, height: Int): Unit = {
     super.resize(width, height)
-    world = world.copy(width = width, height = height)
+    world = world.copy(size = Size(width, height))
+    fruit = fruit.copy(position = world.randomPoint())
   }
 
   /**

@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Pixmap.Format
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.{GL20, Pixmap, Texture}
-import gdx.scala.demo.logic.GameConstants.{FRUIT_COLOR, GRID_WIDTH, SNAKE_COLOR}
+import gdx.scala.demo.logic.GameSystem.{FRUIT_COLOR, GRID_WIDTH, SNAKE_COLOR}
 import gdx.scala.demo.logic.{FruitState, SnakeState, WorldState}
 
 class Renderer(batch:SpriteBatch) {
@@ -27,7 +27,7 @@ class Renderer(batch:SpriteBatch) {
   }
 
   private def renderSnake(snake:SnakeState) = {
-    val step = snake.pathStep
+    val step = 1
     for (i <- snake.path.indices if i % step == 0) {
       val pos = snake.path(i)
       batch.draw(snakeTexture, pos.x, pos.y)

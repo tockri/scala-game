@@ -1,6 +1,9 @@
 package gdx.scala.demo.logic
 
-case class Point(x:Float, y:Float)
+case class Point(x:Float, y:Float) {
+  def move(direction: Direction, speed:Float):Point =
+    Point(x + direction.x * speed, y + direction.y * speed)
+}
 
 case class Size(width:Float, height:Float)
 
