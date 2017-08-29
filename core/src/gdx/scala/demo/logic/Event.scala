@@ -17,8 +17,10 @@ case class SnakeChangesDirection(dir:Direction) extends Event {
 case class SnakeBitesFruit() extends Event {
   override def applyToSnake(snake:SnakeState)(implicit world:WorldState):SnakeState = {
     val ap = snake.path.head
-    snake.copy(size = snake.size + GameSystem.GROWTH_SIZE,
-      path = snake.path.enqueue(List(ap, ap, ap)))
+    val nextSize = snake.size + GameSystem.GROWTH_SIZE
+    val pathLength = nextSize * (GRID_WIDTH / snake.speed).toInt
+    val nextPath = (snake.path.length until pathLength).map(_ => ap).toList ++ snake.path
+    snake.copy(size = nextSize, path = nextPath)
   }
 
   override def applyToFruit(fruit: FruitState)(implicit world:WorldState): FruitState = {
@@ -28,8 +30,8 @@ case class SnakeBitesFruit() extends Event {
 
 case class SnakeMoves() extends Event {
   override def applyToSnake(snake:SnakeState)(implicit world:WorldState):SnakeState = {
-    val nextTop = snake.path.head.move(snake.direction, snake.speed)
-    val nextPath = snake.path.enqueue(nextTop).dequeue._2
+    val nextTop = snake.path.last.move(snake.direction, snake.speed)
+    val nextPath = snake.path.tail :+ nextTop
     val direction = if (isOnGrid(nextTop)) {
       snake.nextDirection
     } else {

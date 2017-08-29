@@ -2,11 +2,9 @@ package gdx.scala.demo
 
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.{ApplicationAdapter, Gdx}
+import com.badlogic.gdx.{ApplicationAdapter, Gdx, InputAdapter}
 import gdx.scala.demo.logic._
 import gdx.scala.demo.view.Renderer
-
-import scala.collection.mutable.ListBuffer
 
 class GdxScalaFpGame extends ApplicationAdapter {
   private lazy val renderer:Renderer = new Renderer(new SpriteBatch)
@@ -14,39 +12,35 @@ class GdxScalaFpGame extends ApplicationAdapter {
   private var world: WorldState = WorldState()
   private var snake: SnakeState = SnakeState()
   private var fruit: FruitState = FruitState()
-  private val events:ListBuffer[Event] = ListBuffer()
+  private var events:List[Event] = Nil
 
-  private def acceptKeys():Unit = {
-    val ipt = Gdx.input
-    if (ipt.isKeyPressed(Keys.LEFT)) {
-      events += SnakeChangesDirection(Left)
-    } else if (ipt.isKeyPressed(Keys.RIGHT)) {
-      events += SnakeChangesDirection(Right)
-    } else if (ipt.isKeyPressed(Keys.UP)) {
-      events += SnakeChangesDirection(Up)
-    } else if (ipt.isKeyPressed(Keys.DOWN)) {
-      events += SnakeChangesDirection(Down)
+  private def addEvent(ev:Event):Unit = {
+    synchronized {
+      events = ev :: events
     }
   }
 
-  private def judge() = {
-    if (snake.path.head.equals(fruit.position)) {
-      events += SnakeBitesFruit()
+  private def judge(): Unit = {
+    if (snake.path.last.equals(fruit.position)) {
+      addEvent(SnakeBitesFruit())
     }
   }
 
-  private def consumeEvents() = {
-    implicit val worldState = world
-    while (events.nonEmpty) {
-      val ev = events.remove(0)
+  private def consumeEvents(): Unit = {
+    implicit val worldState: WorldState = world
+    val loop = synchronized {
+      val loop = events.reverse
+      events = Nil
+      loop
+    }
+    loop.foreach {ev =>
       snake = ev.applyToSnake(snake)
       fruit = ev.applyToFruit(fruit)
     }
   }
 
   override def render(): Unit = {
-    events += SnakeMoves()
-    acceptKeys()
+    addEvent(SnakeMoves())
     judge()
     consumeEvents()
 
@@ -65,7 +59,19 @@ class GdxScalaFpGame extends ApplicationAdapter {
   /**
     * Initialize the game screen
     */
-  override def create(): Unit = super.create()
+  override def create(): Unit = {
+    Gdx.input.setInputProcessor(new InputAdapter() {
+      override def keyDown(keyCode: Int): Boolean = {
+        keyCode match {
+          case Keys.LEFT => addEvent(SnakeChangesDirection(Left))
+          case Keys.RIGHT => addEvent(SnakeChangesDirection(Right))
+          case Keys.UP => addEvent(SnakeChangesDirection(Up))
+          case Keys.DOWN => addEvent(SnakeChangesDirection(Down))
+        }
+        true
+      }
+    })
+  }
 
   override def pause(): Unit = super.pause()
 
