@@ -3,6 +3,7 @@ package gdx.scala.demo
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.{ApplicationAdapter, Gdx, InputAdapter}
+import gdx.scala.demo.geometry.Size
 import gdx.scala.demo.logic._
 import gdx.scala.demo.view.Renderer
 
@@ -33,7 +34,7 @@ class GdxScalaFpGame extends ApplicationAdapter {
       events = Nil
       loop
     }
-    loop.foreach {ev =>
+    loop.par.foreach {ev =>
       snake = ev.applyToSnake(snake)
       fruit = ev.applyToFruit(fruit)
     }

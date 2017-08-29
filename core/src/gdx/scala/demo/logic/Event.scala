@@ -5,7 +5,6 @@ import GameSystem._
 trait Event {
   def applyToSnake(snake:SnakeState)(implicit world:WorldState):SnakeState = snake
   def applyToFruit(fruit:FruitState)(implicit world:WorldState):FruitState = fruit
-  def applyToWorld(world:WorldState):WorldState = world
 }
 
 case class SnakeChangesDirection(dir:Direction) extends Event {

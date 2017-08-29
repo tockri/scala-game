@@ -1,4 +1,6 @@
-package gdx.scala.demo.logic
+package gdx.scala.demo.geometry
+
+import gdx.scala.demo.logic.Direction
 
 case class Point(x:Float, y:Float) {
   def move(direction: Direction, speed:Float):Point =

@@ -1,6 +1,7 @@
 package gdx.scala.demo.logic
 
 import com.badlogic.gdx.graphics.Color
+import gdx.scala.demo.geometry.Point
 
 
 object GameSystem {

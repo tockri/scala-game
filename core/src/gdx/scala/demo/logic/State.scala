@@ -1,6 +1,7 @@
 package gdx.scala.demo.logic
 
 import GameSystem._
+import gdx.scala.demo.geometry.{Point, Size}
 
 import scala.collection.immutable.Queue
 
