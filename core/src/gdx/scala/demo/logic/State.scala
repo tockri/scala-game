@@ -1,6 +1,7 @@
 package gdx.scala.demo.logic
 
 import GameSystem._
+import gdx.scala.demo.geometry.{Point, Size}
 
 import scala.collection.immutable.Queue
 
@@ -15,7 +16,7 @@ case class WorldState(size: Size = Size(0, 0)) extends State {
 
 case class SnakeState(direction:Direction = Stop,
                       nextDirection:Direction = Stop,
-                      path:Queue[Point] = Queue(Point(0, 0)),
+                      path:List[Point] = List(Point(0, 0)),
                       speed:Float = 1.5F,
                       size:Int = 1) extends State
 

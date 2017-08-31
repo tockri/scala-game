@@ -27,10 +27,9 @@ class Renderer(batch:SpriteBatch) {
   }
 
   private def renderSnake(snake:SnakeState): Unit = {
-    val step = 1
-    for (i <- snake.path.indices if i % step == 0) {
-      val pos = snake.path(i)
-      batch.draw(snakeTexture, pos.x, pos.y)
+    val step = (GRID_WIDTH / snake.speed).toInt
+    snake.path.zipWithIndex.filter(_._2 % step == 0).foreach {
+      case (pos, _) => batch.draw(snakeTexture, pos.x, pos.y)
     }
   }
 
