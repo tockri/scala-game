@@ -35,8 +35,8 @@ class GdxScalaFpGame extends ApplicationAdapter {
     }
   }
 
-  private def consumeEvents() = {
-    implicit val worldState = world
+  private def consumeEvents(): Unit = {
+    implicit val worldState: WorldState = world
     while (events.nonEmpty) {
       val ev = events.remove(0)
       snake = ev.applyToSnake(snake)

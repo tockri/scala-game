@@ -73,14 +73,14 @@ class GdxScalaDemoGame extends ApplicationAdapter with GridConstants {
   /**
     * Initialize the game screen
     */
-  override def create() = {
+  override def create(): Unit = {
     batch = new SpriteBatch
     snakeCell = createSnakeCell()
     fruitCell = createFruitCell()
     putFruit()
   }
 
-  private def processKeyEvent() = {
+  private def processKeyEvent(): Unit = {
     val ipt = Gdx.input
     if (ipt.isKeyPressed(Keys.LEFT)) {
       nextDirection = Left
@@ -93,7 +93,7 @@ class GdxScalaDemoGame extends ApplicationAdapter with GridConstants {
     }
   }
 
-  private def updatePosition() = {
+  private def updatePosition(): Unit = {
     val top = snakePath.head
     snakePath.insert(0,
       new Vector2(top.x + snakeDirection.x * snakeSpeed,
@@ -109,7 +109,7 @@ class GdxScalaDemoGame extends ApplicationAdapter with GridConstants {
     }
   }
 
-  private def judge() = {
+  private def judge(): Unit = {
     val top = snakePath.head
     if (top.equals(fruitPos)) {
       snakeSize += GROWTH_SIZE
@@ -117,19 +117,19 @@ class GdxScalaDemoGame extends ApplicationAdapter with GridConstants {
     }
   }
 
-  private def renderSnake() = {
+  private def renderSnake(): Unit = {
     val step = pathStep
-    for (i <- 0 until snakePath.length if i % step == 0) {
+    for (i <- snakePath.indices if i % step == 0) {
       val pos = snakePath(i)
       batch.draw(snakeCell, pos.x, pos.y)
     }
   }
 
-  private def renderFruit() = {
+  private def renderFruit(): Unit = {
     batch.draw(fruitCell, fruitPos.x, fruitPos.y)
   }
 
-  override def render() = {
+  override def render(): Unit = {
     processKeyEvent()
     updatePosition()
     judge()

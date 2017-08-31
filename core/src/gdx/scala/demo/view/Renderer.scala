@@ -26,7 +26,7 @@ class Renderer(batch:SpriteBatch) {
     t
   }
 
-  private def renderSnake(snake:SnakeState) = {
+  private def renderSnake(snake:SnakeState): Unit = {
     val step = 1
     for (i <- snake.path.indices if i % step == 0) {
       val pos = snake.path(i)
@@ -34,7 +34,7 @@ class Renderer(batch:SpriteBatch) {
     }
   }
 
-  private def renderFruit(fruit:FruitState) = {
+  private def renderFruit(fruit:FruitState): Unit = {
     batch.draw(fruitTexture, fruit.position.x, fruit.position.y)
   }
 
