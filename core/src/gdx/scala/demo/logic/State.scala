@@ -3,11 +3,10 @@ package gdx.scala.demo.logic
 import GameSystem._
 import gdx.scala.demo.geometry.{Point, Size}
 
-import scala.collection.immutable.Queue
 
 trait State
 
-case class WorldState(size: Size = Size(0, 0)) extends State {
+case class WorldContext(size: Size = Size(0, 0)) extends State {
   def randomPoint():Point =
     Point(
       GRID_WIDTH * Math.floor(Math.random() * size.width / GRID_WIDTH).toFloat,

@@ -10,7 +10,7 @@ import gdx.scala.demo.view.Renderer
 class GdxScalaFpGame extends ApplicationAdapter {
   private lazy val renderer:Renderer = new Renderer(new SpriteBatch)
 
-  private var world: WorldState = WorldState()
+  private var world: WorldContext = WorldContext()
   private var snake: SnakeState = SnakeState()
   private var fruit: FruitState = FruitState()
   private var events:List[Event] = Nil
@@ -28,13 +28,28 @@ class GdxScalaFpGame extends ApplicationAdapter {
   }
 
   private def consumeEvents(): Unit = {
-    implicit val worldState: WorldState = world
-    val loop = events.reverse
-    events = Nil
-    loop.par.foreach {ev =>
-      snake = ev.applyToSnake(snake)
-      fruit = ev.applyToFruit(fruit)
+    val ctx: WorldContext = world
+    def loop(events:Seq[Event]):Unit = {
+      events.foreach { ev =>
+        val next = ev match {
+          case sev:SnakeEvent => {
+            val t = sev.consume(snake, ctx)
+            snake = t._1
+            t._2
+          }
+          case fev:FruitEvent => {
+            val t = fev.consume(fruit, ctx)
+            fruit = t._1
+            t._2
+          }
+        }
+        if (next.nonEmpty) {
+          loop(next)
+        }
+      }
     }
+    loop(events.reverse)
+    events = Nil
   }
 
   override def render(): Unit = {
@@ -65,6 +80,7 @@ class GdxScalaFpGame extends ApplicationAdapter {
           case Keys.RIGHT => addEvent(SnakeChangesDirection(Right))
           case Keys.UP => addEvent(SnakeChangesDirection(Up))
           case Keys.DOWN => addEvent(SnakeChangesDirection(Down))
+          case _ => ()
         }
         true
       }

@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.{GL20, Pixmap, Texture}
 import gdx.scala.demo.logic.GameSystem.{FRUIT_COLOR, GRID_WIDTH, SNAKE_COLOR}
-import gdx.scala.demo.logic.{FruitState, SnakeState, WorldState}
+import gdx.scala.demo.logic.{FruitState, SnakeState, WorldContext}
 
 class Renderer(batch:SpriteBatch) {
   private lazy val snakeTexture = {
@@ -37,7 +37,7 @@ class Renderer(batch:SpriteBatch) {
     batch.draw(fruitTexture, fruit.position.x, fruit.position.y)
   }
 
-  def render(snake:SnakeState, fruit:FruitState, world:WorldState):Unit = {
+  def render(snake:SnakeState, fruit:FruitState, world:WorldContext):Unit = {
     Gdx.gl.glClearColor(0, 0, 0, 1)
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
     batch.begin()
