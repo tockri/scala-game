@@ -16,9 +16,7 @@ class GdxScalaFpGame extends ApplicationAdapter {
   private var events:List[Event] = Nil
 
   private def addEvent(ev:Event):Unit = {
-    synchronized {
-      events = ev :: events
-    }
+    events = ev :: events
   }
 
   private def judge(): Unit = {
@@ -33,14 +31,14 @@ class GdxScalaFpGame extends ApplicationAdapter {
       events.foreach { ev =>
         val next = ev match {
           case sev:SnakeEvent => {
-            val t = sev.consume(snake, ctx)
-            snake = t._1
-            t._2
+            val (nextSnake, nextEvents) = sev.consume(snake, ctx)
+            snake = nextSnake
+            nextEvents
           }
           case fev:FruitEvent => {
-            val t = fev.consume(fruit, ctx)
-            fruit = t._1
-            t._2
+            val (nextFruit, nextEvents) = fev.consume(fruit, ctx)
+            fruit = nextFruit
+            nextEvents
           }
         }
         if (next.nonEmpty) {
